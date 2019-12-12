@@ -107,7 +107,7 @@ object Combinator {
       kf: (Parser.State[Input], List[String], String) => Eval[Parser.Internal.Result[Input,R]],
       ks: (Parser.State[Input], Queue[Input]) => Eval[Parser.Internal.Result[Input,R]]
     ): Eval[Parser.Internal.Result[Input,R]] = 
-      if (st0.input.length >= st0.pos.value + n)
+      if (st0.input.lengthCompare(st0.pos.value + n) >= 0)
         Eval.defer(ks(st0, st0.input.drop(st0.pos.value).take(n)))
       else 
         Eval.defer(
@@ -127,7 +127,7 @@ object Combinator {
       kf: (Parser.State[Input], List[String], String) => Eval[Parser.Internal.Result[Input,R]],
       ks: (Parser.State[Input], Queue[Input]) => Eval[Parser.Internal.Result[Input,R]]
     ): Eval[Parser.Internal.Result[Input,R]] = 
-      if (st0.input.length >= st0.pos.value + n)
+      if (st0.input.lengthCompare(st0.pos.value + n) >= 0)
         Eval.defer(ks(st0, st0.input.drop(st0.pos.value).take(n)))
       else
         Eval.defer(ensureSuspended(n)(st0, kf, ks))
@@ -142,7 +142,7 @@ object Combinator {
       kf: (Parser.State[Input], List[String], String) => Eval[Parser.Internal.Result[Input,R]],
       ks: (Parser.State[Input], Boolean) => Eval[Parser.Internal.Result[Input,R]]
     ): Eval[Parser.Internal.Result[Input,R]] = 
-      if (st0.input.length >= st0.pos.value + 1) Eval.defer(ks(st0, true))
+      if (st0.input.lengthCompare(st0.pos.value + 1) >= 0) Eval.defer(ks(st0, true))
       else if (st0.complete.bool) Eval.defer(ks(st0, false))
       else Eval.now(prompt(st0, a => ks(a, false), a => ks(a, true)))
   }
@@ -196,7 +196,7 @@ object Combinator {
       kf: (State[Input], List[String], String) => Eval[Internal.Result[Input, R]],
       ks: (State[Input], Unit) => Eval[Internal.Result[Input, R]]
     ): Eval[Internal.Result[Input, R]] = Eval.defer{
-      if (st0.pos.value >= st0.input.length) {
+      if (st0.input.lengthCompare(st0.pos.value) <= 0) {
         if (st0.complete.bool) ks(st0, ())
         else demandInput(
           st0,
